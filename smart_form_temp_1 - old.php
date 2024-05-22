@@ -122,6 +122,7 @@ if($Editable !=''){
 $form_details=get_form_details($original_form_id);
 $card_title=$form_details->form_name;
 $button_title=$form_details->button_name;
+$supplier_process=$form_details->supplier_process;
 
 $parallel=$form_details->is_parallel;
 $this_form_id=$original_form_id;
@@ -165,6 +166,7 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 						$clone_removed=$get_supplier_master_details->clone_removed;
 						$info_copied_email_id=$get_supplier_master_details->info_copied_email_id;
 						$request_clone_id	= $get_supplier_master_details->clone_request_id;
+						$info_copied_legal_name	= $get_supplier_master_details->info_copied_legal_name;
 						$get_request_legal_name	= $get_supplier_master_details->legal_name;
 						if($request_clone_id<>'' && $info_copied_email_id<>'' && $associated_request_ids<>''){
 							$display_cloned_request='';
@@ -560,11 +562,11 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 																			echo '<div class="col-md-6">';
 
 																			if($default_values==''){
-																					echo '<input type="text" name="50[]" id="50_remove" class="form-control form-control-sm text-uppercase" >
+																					echo '<input type="text" name="50[]" id="50_remove" class="form-control form-control-sm text-uppercase" disabled >
 																					';
 																			}
 																			else{
-																				echo '<input type="text" name="50[]" id="50_remove" class="form-control form-control-sm text-uppercase d-none" >
+																				echo '<input type="text" name="50[]" id="50_remove" class="form-control form-control-sm text-uppercase d-none" disabled>
 																					';
 																			}
 																			echo '<div class="row">';
@@ -1371,16 +1373,17 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 							<input type="hidden" value="<?php echo $userid;?>" id="userid" name="userid">
 
 							<input type="hidden" name="clone_request_id_supplier_info" id="clone_request_id_supplier_info" value="<?php echo $verified; ?>" > 
-							<input type="hidden" name="clone_request_id_supplier_info" id="clone_request_id_supplier_info_val" value="<?php echo $clone_request_id_supplier_info_val; ?>" > 
+							<input type="hidden" name="clone_request_id_supplier_info_val" id="clone_request_id_supplier_info_val" value="<?php echo $clone_request_id_supplier_info_val; ?>" > 
 							<input type="hidden" name="verified_sts" id="f" value="<?php echo $verified; ?>" > 
 							<input type="hidden" name="associated_requests_ids" id="associated_requests_ids" value="<?php echo $associated_request_ids; ?>" > 
 							<input type="hidden" name="submit_check" id="submit_check" value="<?php echo $submit_check; ?>" > 
-							<input type="hidden" name="clone_another_count" id="clone_another_count" value="1" > 
+							<!-- <input type="hidden" name="remove_existing_sup_info" id="remove_existing_sup_info" value="" >  -->
+							<!-- <input type="hidden" name="clone_another_count" id="clone_another_count" value="1" >  -->
 							<input type="hidden" name="cloned_and_removed_val" id="cloned_and_removed_val" value=" <?php echo $clone_removed; ?>"> 
 							<input type="hidden" name="selected_supplier_email" id="selected_supplier_email" value="<?php echo $info_copied_email_id; ?>" > 
 							<input type="hidden" name="clone_request_id" id="clone_request_id" value="<?php echo $display_cloned_request; ?>" > 
-							<input type="hidden" name="selected_supplier_email" id="selected_supplier_email" value="<?php echo $info_copied_email_id; ?>" > 
-							<input type="text" name="selected_supplier_legal_name" id="selected_supplier_legal_name" value="<?php echo $get_request_legal_name; ?>" > 
+							<input type="hidden" name="selected_supplier_legal_name" id="selected_supplier_legal_name" value="<?php echo $info_copied_legal_name; ?>" > 
+							<input type="hidden" name="supplier_process" id="supplier_process" value="<?php echo $supplier_process; ?>" > 
 							<input type="hidden" value="<?php if($this_form_id<>5){ echo "0";}else{echo "0";}?>" id="checkdynamic_selectbox_value" name="checkdynamic_selectbox_value">
 
 							<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" > 
@@ -1391,14 +1394,16 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 								<span class="badge badge-secondary"><b class="font-size-lg">Request Closed</b></span>
 							<?php }else{ 
 
-									if($clone_request_id_supplier_info_val != "" && $submit_check=='no'){ ?>
+									if($clone_request_id_supplier_info_val != "" ){ ?>
 										<button type="button" class="btn btn-danger " name="remove_sup_info_cloned" id="remove_sup_info_cloned" onclick='remove_sup_cloned_info()'>Remove cloned Supplier Info <i class="icon-user-cancel ml-2"></i></button> &nbsp; &nbsp;
 										<!-- <button type="button" class="btn btn-primary" name="clone_another_sup_info" id="clone_another_sup_info">Cloned Supplier Info <i class="icon-user-plus ml-2"></i></button>&nbsp; &nbsp; -->
 
-								<?php }else if($clone_request_id_supplier_info_val == "" && $submit_check=='no'){ ?>
-										<button type="button" class="btn btn-primary " name="clone_another_sup_info" id="clone_another_sup_info" onclick="resend_clone_request()">Clone Supplier Info <i class="icon-user-plus ml-2"></i></button>&nbsp;&nbsp;
+								<?php }
+								// else if($clone_request_id_supplier_info_val == "" && $submit_check=='no'){ ?>
+										<!-- <button type="button" class="btn btn-primary" name="clone_another_sup_info" id="clone_another_sup_info" onclick="resend_clone_request()">Clone Supplier Info <i class="icon-user-plus ml-2"></i></button>&nbsp;&nbsp; -->
 
-								<?php } ?>								
+								<?php 
+								?>								
 								
 								<button type="submit" class="btn btn-success" name="submit" id="submit"><?php echo $button_title;?> <i class="icon-paperplane ml-2"></i></button> 
 							<?php } ?>								
@@ -1491,7 +1496,8 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 		<div class="modal-content">
 			<div class="modal-header bg-primary">
 				<h6 class="modal-title">Search Request</h6>
-				<button type="button" id="reset_clone_modal" class="close" data-dismiss="modal" onclick="reset_clone_modal();">&times;</button>
+				<!-- <button type="button" id="reset_clone_modal" class="close" data-dismiss="modal" onclick="reset_clone_modal();">&times;</button> -->
+				<button type="button" id="reset_clone_modal" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			
 			<div class="modal-body">
@@ -1620,6 +1626,14 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 		return key;
 		}
 	$(document).ready(function(){
+		// var selected_supplier_email =  $('#selected_supplier_email').val().toLowerCase();
+		// var clone_request_id_supplier_info =  $('#clone_request_id_supplier_info').val();
+		// var supplier_email_id =  $('#15').val().toLowerCase();
+		// var selected_supplier_legal_name =  $('#selected_supplier_legal_name').val();
+		// var supplier_legal_name =  $('#42').val();
+		// if((supplier_email_id == selected_supplier_email) && (selected_supplier_legal_name==supplier_legal_name)){
+		// 	$("#submit_check").val('yes');
+		// }
 
 		$('#row_hide_other_91').addClass('d-none').removeClass('display_flex');
 		$('#91_other').prop('required',false);
@@ -1949,9 +1963,7 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 		});
 
 
-		$("#15").on("blur", function(event) {
-
-	    });
+		
 	});
 
 
@@ -2411,7 +2423,7 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 		}
 	
 	});
-	$("#15").blur(function() {
+	$("#1511").blur(function() {
 		
 		var selected_option = $("#34 option:selected").val();
 		var supplier_email = $("#15").val().toLowerCase();
@@ -2471,31 +2483,26 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 		$("#smart_form").on('submit', function(event) {
 			
 			if ($(this).valid())
-			{
+			{	
 				var formMailSubmit = 1;
 				var is_live = <?php echo IS_LIVE;?> ;
 				var is_corning = '<?php echo IS_CORNING;?>' ;
-				var BOUNCE_CHECK = '<?php echo BOUNCE_CHECK;?>' ;
+				//var BOUNCE_CHECK = '<?php echo BOUNCE_CHECK;?>' ;
+				var BOUNCE_CHECK = 0;
+
 				var supplier_mail =  $('#15').val().toLowerCase();
 				var supplier_legal_name = document.getElementById('42').value;
+				var selected_supplier_legal_name = $('#selected_supplier_legal_name').val();
 				var clone_request_id_supplier_info =  $('#clone_request_id_supplier_info').val();
-				var clone_another_count =  $('#clone_another_count').val();
+				// var clone_another_count =  $('#clone_another_count').val();
 				var cloned_and_removed_val =  $('#cloned_and_removed_val').val();
 				var clone_request_id_supplier_info_val =  $('#clone_request_id_supplier_info_val').val();
 				var verified_sts =  $('#verified_sts').val();
 				var associated_requests_ids =  $('#associated_requests_ids').val();
 				var submit_check =  $('#submit_check').val();
 				var selected_supplier_email =  $('#selected_supplier_email').val().toLowerCase();
-				if(is_live == 1){
+				if(is_live == 1){					
 					
-					/* if (supplier_mail.indexOf('@') === -1) {
-						$('#15').focus()
-						$.alert({
-							title: 'Alert!',
-							content: "Invalid Supplier Contact Email",
-						});
-						return false;
-					} */
 					if ($('#15').length > 0){
 						var supplier_mail =  $('#15').val().toLowerCase();						
 						var emailPattern =   /^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]@[a-zA-Z0-9.-]+[a-zA-Z]{2,}$/;
@@ -2586,10 +2593,7 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 						}
 					});
 				}
-				if(submit_check=='no'){
-				/* alert('1');
-				return false; */
-					if(formMailSubmit == 1){
+				if(formMailSubmit == 1){
 						var checkdynamic_selectbox_value=$('#checkdynamic_selectbox_value').val();
 
 						var tempMultipleIdArray = [ 52,53,48];
@@ -2683,82 +2687,8 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 								return false;
 							}
 							if(formSubmit==0){
-								var form_id =  $('#form_id').val();
 								
-								if(form_id == 5){
-									var alert_title = 'Send Request for Ariba Upload';
-									var alert_content = 'Are you sure want to send the request for upload to Ariba?';
-								}
-								else{
-									var alert_title = 'Send Request';
-									var alert_content = 'Are you sure want to send request?';
-								}
-								
-								$.confirm({
-									title: alert_title,
-									theme: 'light',
-									content: alert_content,
-									buttons : {
-										yes : {
-											text: 'Confirm',
-											btnClass: 'btn-blue',
-											action: function(){
-												$("#status").val('Pending');
-												var form=$("#smart_form");
-												var formdata = new FormData(form[0]);
-												ajaxindicatorstart('Loading please wait.');
-												$.ajax({
-													url: '<?php echo base_url();?>smartform/quick_add_ajax',
-													type: "POST",
-													data:formdata ? formdata : form.serialize()+'&<?php echo $this->security->get_csrf_token_name();?>='+'<?php echo $this->security->get_csrf_hash();?>',
-													cache       : false,
-													contentType : false,
-													processData : false,
-													dataType: 'json',
-													success: function(data)
-													{
-														console.log(data);
-														if(data.error){
-															
-														}
-														else{
-															window.location.href = '<?php echo base_url(); ?>userhome/quick_add_list';
-														}
-														ajaxindicatorstop();
-													}
-												});	
-												
-											}
-											},no : {
-											text: 'Cancel',
-											btnClass: 'btn-red',
-											action : function(){ 	
-												if(clone_request_id_supplier_info_val == '' && submit_check=='no' && cloned_and_removed_val =='yes'){
-													$("#submit_check").val('no'); 												
-												}else if(clone_request_id_supplier_info_val == '' && submit_check=='yes'){
-													$("#submit_check").val('yes'); 
-													if(cloned_and_removed_val =='yes'){	
-														$("#submit_check").val('no');
-													}										
-												}else if(clone_request_id_supplier_info_val == '' && submit_check=='no' && cloned_and_removed_val ==' '  ){	$("#submit_check").val('yes'); 
-													if(clone_request_id_supplier_info_val == '' && submit_check=='no' && clone_another_count == ""){
-														$("#submit_check").val('no'); 
-													}													
-													if((clone_another_count == 1 || clone_another_count == 2) && cloned_and_removed_val ==''){
-														$("#submit_check").val('yes');	
-													}
-													if(cloned_and_removed_val =='yes' && submit_check=='yes'){
-														$("#submit_check").val('no');													
-													}										
-													
-												}else{
-													$("#submit_check").val('no');
-												}
-												
-											}
-										}
-									}
-								});
+								checkBeforeSubmit();
 							}
 							else{
 								$('#'+emailID).focus();
@@ -2776,467 +2706,197 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 							return false;
 						}
 					}
-				}else if(submit_check=='yes' && associated_requests_ids!=''){
-					/* alert('2');
-					return false; */
-					var check_sup;
-					if(selected_supplier_email!=''){
-						if(selected_supplier_email == supplier_mail){
-							check_sup= "Yes";
-						}else{
-							check_sup= "No";
-						}
-					}else{
-						check_sup= "Yes";
-					}
-					if(check_sup=="No"){
-						$("#submit_check").val('no'); 
-						$("#smart_form").submit();
-					}else{
-						
-						$.ajax({
-								type: 'POST',
-								url: '<?php echo base_url();?>smartform/check_existing_requests/',
-								data: {
-									associated_requests_ids: associated_requests_ids,supplier_legal_name:supplier_legal_name,
-									['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>'
-								},
-								beforeSend: function () {
-									ajaxindicatorstart();
-											
-								},
-								success: function (responseData) {
-									ajaxindicatorstop();
-									//console.log(responseData);
-									if(responseData==0 || responseData==''){
-										
-									}else{
-										$.confirm({
-											title: 'Alert',
-											theme: 'light',
-											content: 'Would you like to display and copy the information filled by the supplier email address '+supplier_email+' within a year? Please note that if you change the supplier email address to some other after copying the information, all the supplier information will be removed from the request.',
-											buttons : {
-												yes : {
-													text: 'Yes',
-													btnClass: 'btn-blue',
-													action: function(){
-														console.log(responseData);
-														$('#appendDatas_supplier_clone_ids').html('');
-														$('#appendDatas_supplier_clone_ids').append(responseData);
-														$('.child_rows').hide();
-														$('.up_arrow').hide();
-														//functest();
-														/* jk++;
-														if(jk==1){
-															suppliercloneid(responseData);
-														} */
-														//$('#supplier_clone_modal').trigger('click');
-														$('#modal_theme_danger').modal('toggle');
-														
-													}
-													},no : {
-													text: 'No',
-													btnClass: 'btn-red',
-													action : function(){
-														$("#clone_request_id_supplier_info").val(''); 
-														$("#submit_check").val('no'); 
-														if(clone_another_count != 2){
-															$("#smart_form").submit();	
-														}
-													}
-												}
-											}
-										});
-									}
-									
-								}
-						});
-					}
-					
-				}else{
-				if(BOUNCE_CHECK==1){
-					ajaxindicatorstart();
-					$.ajax({
-						url: '<?php echo base_url();?>smartform/validate_email_address',
-						type: "POST",
-						data: { supplier_mail : supplier_mail,['<?php echo $this->security->get_csrf_token_name();?>']:'<?php echo $this->security->get_csrf_hash();?>' },
-						dataType: 'json',
-						success: function(data)
-						{
-							ajaxindicatorstop();
-							if(data.status=='invalid'){
-								$.alert({
-									title: 'Alert!',
-									content: 'Supplier Contact Email is Invalid. Please enter Valid supplier email address to proceed further.',
-								});
-								return false;
-							}else if(data.status=='Spamtrap'){
-								$.alert({
-									title: 'Alert!',
-									content: 'Supplier Contact Email is found as a	Spamtrap. Please enter Valid supplier email address to proceed further.',
-								}); 
-								return false;
-							}else if(data.status=='abuse'){
-								$.alert({
-									title: 'Alert!',
-									content: 'Supplier Contact Email is found as a Abuser. Please enter Valid supplier email address to proceed further.',
-								});
-								return false;
-							}else if(data.status=='do_not_mail'){
-								$.alert({
-									title: 'Alert!',
-									content: 'Supplier Contact Email is found as a Do  not email. Please enter Valid supplier email address to proceed further.',
-								});
-								return false;
-							}else{
-								if(formMailSubmit == 1){
-									var checkdynamic_selectbox_value=$('#checkdynamic_selectbox_value').val();
-
-									var tempMultipleIdArray = [ 52,53,48];
-									var check_hidden_multiselect_value=0;
-									jQuery.each( tempMultipleIdArray, function( i, val ) {
-										
-										var multiCheck = $('#'+val).attr('multiple');
-										var multiReq = $('#'+val).attr('required');
-										var multiVal = $('#'+val).val();
-										if (typeof(multiCheck) != 'undefined' && multiCheck == 'multiple'){
-											if(typeof(multiReq) != 'undefined' && multiReq == 'required'){
-												if(typeof(multiVal) == 'undefined' || multiVal == null || multiVal == ''){
-													check_hidden_multiselect_value++;
-												}
-											}
-										}
-										console.log("multi_"+multiCheck);
-										console.log("req_"+multiReq);
-										console.log("val_"+multiVal);
-									});
-
-									checkdynamic_selectbox_value=0;
-									check_hidden_multiselect_value=0;
-									if(checkdynamic_selectbox_value==0 && check_hidden_multiselect_value==0){
-										var formSubmit=0;
-										var form_id =  $('#form_id').val();
-										var emailID = 58;
-										var element =  document.getElementById(emailID);
-										if (typeof(element) != 'undefined' && element != null)
-										{
-											var multiple_email=$('#'+emailID).val();
-											if(multiple_email != ''){
-												var reg = /^([A-Za-z0-9_&\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-												var emails = multiple_email.split(",");
-												for(var i = 0; i < emails.length; i++)
-												{
-													if (reg.test(emails[i]) == false) {
-														formSubmit+=1;
-													}
-													else
-													{
-														formSubmit+=0;
-													}
-												}
-											}
-										}
-										var focusID = '';
-										var focusIDVal = '';
-										$(".dynamic_text_box").each(function() {
-
-											if ($(this).val().trim() == "") {
-												var prefix = $(this).attr('data-id');
-												var charsReplace = {' ':'__','(':'__',')':'__','.':'__'};
-												var selectedValuesReplace = prefix.replace(/[ ().]/g, m => charsReplace[m]);		
-												selectedValuesReplace = selectedValuesReplace.replace(",", "__");	
-												if(focusID==''){
-													focusID = selectedValuesReplace;
-												}
-												formSubmit = 2;
-											}
-											else if($(this).val().trim() != ""){
-												userValue = $(this).val().trim().length;
-												if(userValue<2 || userValue>255){
-													var prefix = $(this).attr('data-id');
-													var charsReplace = {' ':'__','(':'__',')':'__','.':'__'};
-													var selectedValuesReplace = prefix.replace(/[ ().]/g, m => charsReplace[m]);		
-													selectedValuesReplace = selectedValuesReplace.replace(",", "__");	
-													if(focusIDVal==''){
-														focusIDVal = selectedValuesReplace;
-													}
-													formSubmit = 3;
-												}
-											}
-										});
-
-										if(formSubmit==2){
-											$( "#50_"+focusID ).focus();
-											$( "#50_"+focusID ).val('');
-											$.alert({
-												title: 'Alert!',
-												content: 'Please enter values to the Field “Indicate the supplier ID to be updated (if multiple values are provided, separate them by a comma) or Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request',
-											});
-											return false;
-										}
-										if(formSubmit==3){
-											$( "#50_"+focusIDVal ).focus();
-											$.alert({
-												title: 'Alert!',
-												content: 'Charcters should be between 2 to 255 to the Field "Indicate the supplier ID to be updated (if multiple values are provided, separate them by a comma) or Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request"',
-											});
-											return false;
-										}
-										if(formSubmit==0){
-											var form_id =  $('#form_id').val();
-											
-											if(form_id == 5){
-												var alert_title = 'Send Request for Ariba Upload';
-												var alert_content = 'Are you sure want to send the request for upload to Ariba?';
-											}
-											else{
-												var alert_title = 'Send Request';
-												var alert_content = 'Are you sure want to send request?';
-											}
-											
-											$.confirm({
-												title: alert_title,
-												theme: 'light',
-												content: alert_content,
-												buttons : {
-													yes : {
-														text: 'Confirm',
-														btnClass: 'btn-blue',
-														action: function(){
-															$("#status").val('Pending');
-															var form=$("#smart_form");
-															var formdata = new FormData(form[0]);
-															ajaxindicatorstart('Loading please wait.');
-															$.ajax({
-																url: '<?php echo base_url();?>smartform/quick_add_ajax',
-																type: "POST",
-																data:formdata ? formdata : form.serialize()+'&<?php echo $this->security->get_csrf_token_name();?>='+'<?php echo $this->security->get_csrf_hash();?>',
-																cache       : false,
-																contentType : false,
-																processData : false,
-																dataType: 'json',
-																success: function(data)
-																{
-																	console.log(data);
-																	if(data.error){
-																		
-																	}
-																	else{
-																		window.location.href = '<?php echo base_url(); ?>userhome/quick_add_list';
-																	}
-																	ajaxindicatorstop();
-																}
-															});	
-															
-														}
-														},no : {
-														text: 'Cancel',
-														btnClass: 'btn-red',
-														action : function(){  
-															if(clone_request_id_supplier_info_val == ''){
-																$("#submit_check").val('yes'); 
-															}
-															
-														}
-													}
-												}
-											});
-										}
-										else{
-											$('#'+emailID).focus();
-											$.alert({
-												title: 'Alert!',
-												content: 'Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request"',
-											});
-										}
-										
-									}else{
-										$.alert({
-										title: 'Alert!',
-										content: 'Please fill Mandatory fields',
-										});
-										return false;
-									}
-								}
-
-							}
-						}
-							
-					});
-				}else{
-					if(formMailSubmit == 1){
-						var checkdynamic_selectbox_value=$('#checkdynamic_selectbox_value').val();
-
-						var tempMultipleIdArray = [ 52,53,48];
-						var check_hidden_multiselect_value=0;
-						jQuery.each( tempMultipleIdArray, function( i, val ) {
-							
-							var multiCheck = $('#'+val).attr('multiple');
-							var multiReq = $('#'+val).attr('required');
-							var multiVal = $('#'+val).val();
-							if (typeof(multiCheck) != 'undefined' && multiCheck == 'multiple'){
-								if(typeof(multiReq) != 'undefined' && multiReq == 'required'){
-									if(typeof(multiVal) == 'undefined' || multiVal == null || multiVal == ''){
-										check_hidden_multiselect_value++;
-									}
-								}
-							}
-							console.log("multi_"+multiCheck);
-							console.log("req_"+multiReq);
-							console.log("val_"+multiVal);
-						});
-
-						checkdynamic_selectbox_value=0;
-						check_hidden_multiselect_value=0;
-						if(checkdynamic_selectbox_value==0 && check_hidden_multiselect_value==0){
-							var formSubmit=0;
-							var form_id =  $('#form_id').val();
-							var emailID = 58;
-							var element =  document.getElementById(emailID);
-							if (typeof(element) != 'undefined' && element != null)
-							{
-								var multiple_email=$('#'+emailID).val();
-								if(multiple_email != ''){
-									var reg = /^([A-Za-z0-9_&\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-									var emails = multiple_email.split(",");
-									for(var i = 0; i < emails.length; i++)
-									{
-										if (reg.test(emails[i]) == false) {
-											formSubmit+=1;
-										}
-										else
-										{
-											formSubmit+=0;
-										}
-									}
-								}
-							}
-							var focusID = '';
-							var focusIDVal = '';
-							$(".dynamic_text_box").each(function() {
-
-								if ($(this).val().trim() == "") {
-									var prefix = $(this).attr('data-id');
-									var charsReplace = {' ':'__','(':'__',')':'__','.':'__'};
-									var selectedValuesReplace = prefix.replace(/[ ().]/g, m => charsReplace[m]);		
-									selectedValuesReplace = selectedValuesReplace.replace(",", "__");	
-									if(focusID==''){
-										focusID = selectedValuesReplace;
-									}
-									formSubmit = 2;
-								}
-								else if($(this).val().trim() != ""){
-									userValue = $(this).val().trim().length;
-									if(userValue<2 || userValue>255){
-										var prefix = $(this).attr('data-id');
-										var charsReplace = {' ':'__','(':'__',')':'__','.':'__'};
-										var selectedValuesReplace = prefix.replace(/[ ().]/g, m => charsReplace[m]);		
-										selectedValuesReplace = selectedValuesReplace.replace(",", "__");	
-										if(focusIDVal==''){
-											focusIDVal = selectedValuesReplace;
-										}
-										formSubmit = 3;
-									}
-								}
-							});
-
-							if(formSubmit==2){
-								$( "#50_"+focusID ).focus();
-								$( "#50_"+focusID ).val('');
-								$.alert({
-									title: 'Alert!',
-									content: 'Please enter values to the Field “Indicate the supplier ID to be updated (if multiple values are provided, separate them by a comma) or Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request',
-								});
-								return false;
-							}
-							if(formSubmit==3){
-								$( "#50_"+focusIDVal ).focus();
-								$.alert({
-									title: 'Alert!',
-									content: 'Charcters should be between 2 to 255 to the Field "Indicate the supplier ID to be updated (if multiple values are provided, separate them by a comma) or Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request"',
-								});
-								return false;
-							}
-							if(formSubmit==0){
-								var form_id =  $('#form_id').val();
-								
-								if(form_id == 5){
-									var alert_title = 'Send Request for Ariba Upload';
-									var alert_content = 'Are you sure want to send the request for upload to Ariba?';
-								}
-								else{
-									var alert_title = 'Send Request';
-									var alert_content = 'Are you sure want to send request?';
-								}
-								
-								$.confirm({
-									title: alert_title,
-									theme: 'light',
-									content: alert_content,
-									buttons : {
-										yes : {
-											text: 'Confirm',
-											btnClass: 'btn-blue',
-											action: function(){
-												$("#status").val('Pending');
-												var form=$("#smart_form");
-												var formdata = new FormData(form[0]);
-												ajaxindicatorstart('Loading please wait.');
-												$.ajax({
-													url: '<?php echo base_url();?>smartform/quick_add_ajax',
-													type: "POST",
-													data:formdata ? formdata : form.serialize()+'&<?php echo $this->security->get_csrf_token_name();?>='+'<?php echo $this->security->get_csrf_hash();?>',
-													cache       : false,
-													contentType : false,
-													processData : false,
-													dataType: 'json',
-													success: function(data)
-													{
-														console.log(data);
-														if(data.error){
-															
-														}
-														else{
-															window.location.href = '<?php echo base_url(); ?>userhome/quick_add_list';
-														}
-														ajaxindicatorstop();
-													}
-												});	
-												
-											}
-											},no : {
-											text: 'Cancel',
-											btnClass: 'btn-red',
-											action : function(){  
-												
-											}
-										}
-									}
-								});
-							}
-							else{
-								$('#'+emailID).focus();
-								$.alert({
-									title: 'Alert!',
-									content: 'Please enter valid Additional email address in "Additional Corning email address(es) for people who need to be copied on the status of the request"',
-								});
-							}
-							
-						}else{
-							$.alert({
-							title: 'Alert!',
-							content: 'Please fill Mandatory fields',
-							});
-							return false;
-						}
-					}
-				}
-				}
-			} 
+				//alert('submited');
+			}
 			event.preventDefault(); // stop form from redirecting to java servlet page
 		});
 
 	});
+
+	function checkBeforeSubmit(){
+		ajaxindicatorstart();
+		var form_id =  $('#form_id').val();
+		var supplier_mail =  $('#15').val().toLowerCase();
+		var supplier_legal_name = document.getElementById('42').value;
+		var supplier_request_id = document.getElementById('sup_id').value.trim();
+		var submit_check=$("#submit_check").val(); 
+		// alert(supplier_mail);
+		// alert(supplier_legal_name);
+	
+
+		if(submit_check=='no'){
+			ajaxindicatorstop();
+			submitForm();
+		}else{
+			$.ajax({	
+				type: "POST",	
+				url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',	
+				data: { search_keyword: supplier_mail,supplier_legal_name:supplier_legal_name,supplier_request_id:supplier_request_id,['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>'},
+				dataType  : "json", 
+				success : function(responseData) {	
+					ajaxindicatorstop();
+					if(responseData !='' && responseData !=null){
+						$.confirm({
+							title: 'Alert',
+							theme: 'light',
+							content: 'Would you like to display and copy the information filled by the supplier email address '+supplier_mail+' within a year? Please note that if you change the supplier email address to some other after copying the information, all the supplier information will be removed from the request.',
+							buttons : {
+								yes : {
+									text: 'Yes',
+									btnClass: 'btn-blue',
+									action: function(){
+										console.log(responseData);
+										$('#appendDatas_supplier_clone_ids').html('');
+										$('#appendDatas_supplier_clone_ids').append(responseData);
+										$('.child_rows').hide();
+										$('.up_arrow').hide();
+										//functest();
+										/* jk++;
+										if(jk==1){
+											suppliercloneid(responseData);
+										} */
+										//$('#supplier_clone_modal').trigger('click');
+										$('#modal_theme_danger').modal('toggle');
+										
+									}
+									},no : {
+									text: 'No',
+									btnClass: 'btn-red',
+									action : function(){
+										$("#clone_request_id_supplier_info").val(''); 
+										$("#submit_check").val('no'); 
+										// if(clone_another_count != 2){
+											submitForm();
+										// }
+									}
+								}
+							}
+						});
+					}else{
+						ajaxindicatorstop();
+						// $("#associated_requests_ids").val('');
+		                // $("#submit_check").val('no');
+		                // $("#selected_supplier_email").val('');
+		                submitForm();
+					}
+				}	
+			});
+		}
+
+	}
+
+	function submitForm(){
+		var form_id =  $('#form_id').val();
+		if(form_id == 5){
+			var alert_title = 'Send Request for Ariba Upload';
+			var alert_content = 'Are you sure want to send the request for upload to Ariba?';
+		}
+		else{
+			var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim().toLowerCase();
+		    var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim().toLowerCase();
+		    var search_keyword = document.getElementById('15').value.trim().toLowerCase();
+		    var supplier_legal_name = document.getElementById('42').value.trim().toLowerCase();	
+		    var remove_existing_sup_info =0;
+		    console.log("selected "+selected_supplier_legal_name); 
+		    console.log("noselected "+supplier_legal_name); 
+		    console.log("selected "+selected_supplier_email);   
+		    console.log("noselected "+search_keyword);   
+		    if($('#remove_sup_info_cloned').length >0){	
+			    if(selected_supplier_legal_name == supplier_legal_name && selected_supplier_email == search_keyword){
+			    	
+			    	var alert_title = 'Send Request';
+					var alert_content = 'Are you sure want to send request?';
+			    }else{	
+					remove_existing_sup_info =1;			    		    	
+			    	var alert_title = 'Send Request';
+					var alert_content = 'Supplier Legal Name or Email ID is changed, so the copied information will be removed from the system.</br></br>Are you sure want proceed?';
+			    }			   
+			}else{	
+				var alert_title = 'Send Request';
+				var alert_content = 'Are you sure want to send request?';
+			}
+		}
+		
+		$.confirm({
+			title: alert_title,
+			theme: 'light',
+			content: alert_content,
+			buttons : {
+				yes : {
+					text: 'Confirm',
+					btnClass: 'btn-blue',
+					action: function(){
+						$("#status").val('Pending');
+						var form=$("#smart_form");
+						var formdata = new FormData(form[0]);						
+						ajaxindicatorstart('Loading please wait.');						
+						// ajaxindicatorstop();
+
+						if(remove_existing_sup_info == 1){
+							var temp_request_id = '<?php echo $sup_id;?>';
+							// var cloned_sup_req_id= $("#clone_request_id_supplier_info_val").val();	
+							$.ajax({	
+								type: "POST",	
+								url: '<?php echo base_url();?>smartform/remove_existing_sup_cloned_info',	
+								data: { current_request_id:temp_request_id,search_keyword:search_keyword,supplier_legal_name:supplier_legal_name,['<?php echo $this->security->get_csrf_token_name();?>']:'<?php echo $this->security->get_csrf_hash();?>'},	
+								success   : function(data) {	
+									ajaxindicatorstop();	
+									//reset_clone_modal();	
+									if(data=="1"){	
+										// window.location.href = '<?php echo base_url(); ?>smartform/form_edit_as/'+sup_id;	
+										$.alert({	
+											title: 'Alert!',	
+											content: 'Copied supplier information are removed successfully.',	
+											 onAction: function () {
+											 	// $("#submit_check").val('yes');
+												window.location.reload();	
+											 }	
+										});				  									
+									}
+								}	
+							});	
+						}else{
+							$.ajax({
+							url: '<?php echo base_url();?>smartform/quick_add_ajax',
+							type: "POST",
+							data:formdata ? formdata : form.serialize()+'&<?php echo $this->security->get_csrf_token_name();?>='+'<?php echo $this->security->get_csrf_hash();?>',
+							cache       : false,
+							contentType : false,
+							processData : false,
+							dataType: 'json',
+							success: function(data)
+							{
+								console.log(data);
+								if(data.error){
+									
+								}
+								else{
+									window.location.href = '<?php echo base_url(); ?>userhome/quick_add_list';
+								}
+								ajaxindicatorstop();
+							}
+						});	
+						}																		
+					}
+				},no : {
+				text: 'Cancel',
+				btnClass: 'btn-red',
+				action : function(){ 
+					ajaxindicatorstop();
+					// $("#submit_check").val('yes'); 	
+					if($('#remove_sup_info_cloned').length >0){
+						$('#submit_check').val('no');
+					}else{
+						$('#submit_check').val('');
+					}											
+				}
+			}
+			}
+		});
+		
+		
+		
+	}
 	
 	function searchSupplier(pageNo){
 		pageNo = pageNo ? pageNo : 1;
@@ -3332,6 +2992,7 @@ $get_request_legal_name	= $get_supplier_master_details->legal_name;
 					
 				}
 				else{
+					// divya
 					window.location.href = '<?php echo base_url(); ?>smartform/form_edit_as/'+sup_id;
 				}
 			}
@@ -4108,6 +3769,9 @@ function clone_supplier_info(supId,){
 	var selected_request_id = supId;	
 	var temp_request_id = '<?php echo $sup_id;?>';	
 	var form_id = '<?php echo $original_form_id;?>';	
+	var supplier_emailaddress = $('#15').val();	
+	var supplier_legalname = $('#42').val();	
+	// alert()
 	//alert(selected_request_id+' - '+temp_request_id);	
 	$.confirm({	
 		title: 'Alert',	
@@ -4122,7 +3786,7 @@ function clone_supplier_info(supId,){
 					$.ajax({	
 						type: "POST",	
 						url: '<?php echo base_url();?>smartform/clone_supplier_info',	
-						data: { selected_request_id:selected_request_id,current_request_id:temp_request_id,current_form_id:form_id ,['<?php echo $this->security->get_csrf_token_name();?>']:'<?php echo $this->security->get_csrf_hash();?>'},	
+						data: { selected_request_id:selected_request_id,current_request_id:temp_request_id,current_form_id:form_id ,supplier_emailaddress:supplier_emailaddress,supplier_legalname:supplier_legalname,['<?php echo $this->security->get_csrf_token_name();?>']:'<?php echo $this->security->get_csrf_hash();?>'},	
 						success   : function(data) {	
 							ajaxindicatorstop();	
 							//reset_clone_modal();	
@@ -4130,8 +3794,9 @@ function clone_supplier_info(supId,){
 							   $.alert({	
 									title: 'Alert!',	
 									content: 'Copied successfully.',	
-									 onAction: function () {	
-										window.location.reload();	
+									 onAction: function () {
+										$("#submit_check").val('yes');
+										window.location.reload();
 									 }	
 								});										
 							}else{	
@@ -4184,7 +3849,8 @@ function remove_sup_cloned_info(){
 							   $.alert({	
 									title: 'Alert!',	
 									content: 'Copied supplier information removed successfully.',	
-									 onAction: function () {	
+									 onAction: function () {
+									 	// $("#submit_check").val('yes');
 										window.location.reload();	
 									 }	
 								});										
@@ -4216,19 +3882,22 @@ function remove_sup_cloned_info(){
 
 function resend_clone_request(){
 	// alert("test");
-	$("#clone_another_count").val('2');	
-	$("#submit_check").val('yes');
-	$("#smart_form").submit();
+	// $("#clone_another_count").val('2');	
+	// $("#submit_check").val('yes');
+	// $("#smart_form").submit();
 }
 
 function insert_supplier_temp_data(req_ids,supp_email,sup_id){
 	ajaxindicatorstart();
 	var req_id = req_ids.replace(',','|');
+	var supplier_legal_name = document.getElementById('42').value.trim();
 	$.ajax({	
 		type: "POST",	
 		url: '<?php echo base_url();?>smartform/insert_supplier_temp_data',	
 		data: { selected_request_id:req_ids,current_request_id:sup_id,supplier_email:supp_email ,['<?php echo $this->security->get_csrf_token_name();?>']:'<?php echo $this->security->get_csrf_hash();?>'},	
 		success   : function(data) {	
+			$("#selected_supplier_legal_name").val(supplier_legal_name);	
+			$("#submit_check").val('yes');						
 			ajaxindicatorstop();	
 		}	
 	});
@@ -4236,31 +3905,27 @@ function insert_supplier_temp_data(req_ids,supp_email,sup_id){
 
 $(document).ready(function(e) {
 
-
-	var currentRequest = null; 
+	var currentRequest;
 	$(function() { 
 		$("#15").autocomplete({
 			minLength: 3,
 			delay: 30, // this is in milliseconds
 			json: true,			
-		source: function(request, response) {
+		    source: function(request, response) {
 			
 			var search_keyword = document.getElementById('15').value.trim();
 			var supplier_legal_name = document.getElementById('42').value.trim();
 			var supplier_request_id = document.getElementById('sup_id').value.trim();
+			if (currentRequest) {
+                currentRequest.abort();
+            }
 				currentRequest = $.ajax({
 					url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete',
 					type: 'post',
 					dataType: "json",
-					async: false,
 					data: {
 						search_keyword: search_keyword,supplier_legal_name:supplier_legal_name,supplier_request_id:supplier_request_id,
 						['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>'
-					},
-					beforeSend : function()    {           
-						if(currentRequest != null) {
-							currentRequest.abort();
-						}
 					},
 					success: function(data) {
 						response(data);
@@ -4271,12 +3936,11 @@ $(document).ready(function(e) {
 							};
 						}));
 						return data;
-						
 					},
-					error:function(e){
-					  // Error
-					  
+					error: function(e) {
+						// Error handling
 					}
+					
 				});
 			//Fetch data
 			/* if (search_keyword != '') {
@@ -4316,6 +3980,8 @@ $(document).ready(function(e) {
 		select: function(event, ui) {
 			//Set selection
 			var supplier_request_id = document.getElementById('sup_id').value;
+			var supplier_process = document.getElementById('supplier_process').value.trim();
+			
 			$('#15').val(ui.item.label); // display the selected text
 			event.preventDefault();
 			$(this).val(ui.item.label);
@@ -4330,40 +3996,383 @@ $(document).ready(function(e) {
 					$("#clone_request_id_supplier_info").val('yes');
 				}
 			}
-			$("#associated_requests_ids").val(ui.item.value);
-			$("#submit_check").val('yes'); 
-			$("#selected_supplier_email").val(ui.item.label); 
-			var associate_ids=$("#associated_requests_ids").val();
-			insert_supplier_temp_data(associate_ids,ui.item.label,supplier_request_id);
+			if(supplier_process=='Y'){
+				// $("#associated_requests_ids").val(ui.item.value);
+				// $("#submit_check").val('yes'); 
+				// $("#selected_supplier_email").val(ui.item.label); 
+				// var associate_ids=$("#associated_requests_ids").val();
+				//insert_supplier_temp_data(associate_ids,ui.item.label,supplier_request_id);
+			}
+			
 			//$('#select_supplier_info').show();
 			//get_associated_request(ui.item.label);
 			return false;
 		}
 		});
+	}); 
+	var currentXhr; 
+	// var currentXhr_15_bind='';
+
+	function validate_sup_emailaddress(){ 
+	     clearTimeout(keyupTimer);
+	        var keyupTimer = setTimeout(function () {
+	            console.log('start');
+	            var search_keyword = document.getElementById('15').value.trim();
+	            var supplier_legal_name = document.getElementById('42').value.trim();
+	            var supplier_request_id = document.getElementById('sup_id').value.trim();
+	            var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+	            var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+	            var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim();
+	            var supplier_process = document.getElementById('supplier_process').value.trim();
+
+	            if (search_keyword.length > 3 && supplier_process=='Y') {
+	                if (search_keyword != '' && supplier_legal_name != '') {
+	                    if (selected_supplier_email == search_keyword) {
+	                        // if (currentXhr_15_bind && currentXhr_15_bind.readyState !== 4) {
+	                        //     currentXhr_15_bind.abort(); // clear previous request
+	                        //     console.log('abort');
+	                        // }
+	                        // currentXhr_15_bind = $.ajax({
+	                        $.ajax({
+	                            type: "POST",
+	                            url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+	                            data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+	                            dataType: "json",
+	                            success: function(data) {                 
+	                                ajaxindicatorstop();
+	                                console.log('stop');
+	                                if (data.length > 0) {
+	                                    $.each(data, function(index, value) {
+	                                        console.log(index + ' - ' + value);
+	                                        var result = value.split('|');
+	                                        var associated_sup_id_res = result[0];
+	                                        var supplier_email_address_res = result[1];
+	                                        // insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+	                                        $("#associated_requests_ids").val(associated_sup_id_res);
+	                                        $("#submit_check").val('yes');
+	                                        $("#selected_supplier_email").val(supplier_email_address_res);
+	                                        // $('#clone_another_sup_info').removeClass('d-none');                                
+	                                    });
+	                                }else{                  
+	                                    // $('#clone_another_sup_info').addClass('d-none');
+	                                }                      
+	                            }
+	                        });
+	                    }
+	                }
+	            }
+	        }, 800); 
+	}
+
+
+	$("#1511").bind({
+	    copy : function(){
+	       validate_sup_emailaddress();
+	    },
+	    paste : function(){
+	       validate_sup_emailaddress();        
+	    },
+	    keyup : function(){
+	        clearTimeout(keyupTimer);
+	        var keyupTimer = setTimeout(function () {
+	            console.log('start');
+	            var search_keyword = document.getElementById('15').value.trim();
+	            var supplier_legal_name = document.getElementById('42').value.trim();
+	            var supplier_request_id = document.getElementById('sup_id').value.trim();
+	            var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+	            var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+	            var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim();
+	            var supplier_process = document.getElementById('supplier_process').value.trim();
+
+	            if (search_keyword.length > 3 && supplier_process=='Y') {
+	                if (search_keyword != '' && supplier_legal_name != '') {
+	                    if (selected_supplier_email != search_keyword) {
+	                        if (currentXhr && currentXhr.readyState !== 4) {
+	                            currentXhr.abort(); // clear previous request
+	                            console.log('abort');
+	                        }
+	                        currentXhr = $.ajax({
+	                            type: "POST",
+	                            url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+	                            data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+	                            dataType: "json",
+	                            success: function(data) {                 
+	                                ajaxindicatorstop();
+	                                console.log('stop');
+	                                if (data.length > 0) {
+	                                    $.each(data, function(index, value) {
+	                                        console.log(index + ' - ' + value);
+	                                        var result = value.split('|');
+	                                        var associated_sup_id_res = result[0];
+	                                        var supplier_email_address_res = result[1];
+	                                        // insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+	                                        $("#associated_requests_ids").val(associated_sup_id_res);
+	                                        $("#submit_check").val('yes');
+	                                        $("#selected_supplier_email").val(supplier_email_address_res);
+	                                        // $('#clone_another_sup_info').removeClass('d-none');                                
+	                                    });
+	                                }else{                  
+	                                    // $('#clone_another_sup_info').addClass('d-none');
+	                                }                      
+	                            }
+	                        });
+	                    }
+	                }
+	            }
+	        }, 800);       
+	    }
 	});
+
+
+	// $("#15").on("keyup", function(event) {
+	// 	clearTimeout(keyupTimer);
+	//     var keyupTimer = setTimeout(function () {
+	//     console.log('start');
+	//     var search_keyword = document.getElementById('15').value.trim();
+	//     var supplier_legal_name = document.getElementById('42').value.trim();
+	//     var supplier_request_id = document.getElementById('sup_id').value.trim();
+	//     var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+	//     var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+	//     var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim();
+	//     var supplier_process = document.getElementById('supplier_process').value.trim();
+
+	//     if (search_keyword.length > 3 && supplier_process=='Y') {
+	//         if (search_keyword != '' && supplier_legal_name != '') {
+	//             if (selected_supplier_email != search_keyword) {
+	//                 if (currentXhr && currentXhr.readyState !== 4) {
+	//                     currentXhr.abort(); // clear previous request
+	//                     console.log('abort');
+	//                 }
+	//                 currentXhr = $.ajax({
+	//                     type: "POST",
+	//                     url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+	//                     data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+	//                     dataType: "json",
+	//                     success: function(data) {                 
+	//                         ajaxindicatorstop();
+	//                         console.log('stop');
+	//                         if (data.length > 0) {
+	//                             $.each(data, function(index, value) {
+	//                                 console.log(index + ' - ' + value);
+	//                                 var result = value.split('|');
+	//                                 var associated_sup_id_res = result[0];
+	//                                 var supplier_email_address_res = result[1];
+	//                                 insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+	//                                 $("#associated_requests_ids").val(associated_sup_id_res);
+	//                                 $("#submit_check").val('yes');
+	//                                 $("#selected_supplier_email").val(supplier_email_address_res);
+	// 								// $('#clone_another_sup_info').removeClass('d-none');                                
+	//                             });
+	//                         }else{                  
+	// 							// $('#clone_another_sup_info').addClass('d-none');
+	//                         }                      
+	//                     }
+	//                 });
+	//             }
+	//         }
+	//     }
+	// }, 800);
+	// });
+
+
+	// var currentXhr_42_paste='';
+	// $("#42").on("paste", function(event) {	
+	//     var search_keyword = document.getElementById('15').value.trim();
+	//     var supplier_legal_name = document.getElementById('42').value.trim();
+	//     var supplier_request_id = document.getElementById('sup_id').value.trim();
+	//     var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+	//     var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+	//     var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim();
+	//     var supplier_process = document.getElementById('supplier_process').value.trim();   
+	//     if (supplier_process=='Y') {
+	//         if (search_keyword != '' && supplier_legal_name != '') {
+	//             if (selected_supplier_email == search_keyword) {
+	//                 if (currentXhr_42_paste && currentXhr_42_paste.readyState !== 4) {
+	//                     currentXhr_42_paste.abort(); // clear previous request
+	//                     // console.log('abort');
+	//                 }
+	//                 currentXhr_42_paste = $.ajax({
+	//                     type: "POST",
+	//                     url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+	//                     data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+	//                     dataType: "json",
+	//                     success: function(data) {                 
+	//                         ajaxindicatorstop();
+	//                         console.log('stop');
+	//                         if (data.length > 0) {
+	//                             $.each(data, function(index, value) {
+	//                             	alert('ttttttttttt');  
+	//                                 console.log(index + ' - ' + value);
+	//                                 var result = value.split('|');
+	//                                 var associated_sup_id_res = result[0];
+	//                                 var supplier_email_address_res = result[1];
+	//                                 insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+	//                                 $("#associated_requests_ids").val(associated_sup_id_res);
+	//                                 $("#submit_check").val('yes');
+	//                                 $("#selected_supplier_email").val(supplier_email_address_res);
+	// 								// $('#clone_another_sup_info').removeClass('d-none');                                
+	//                             });
+	//                         }else{   alert('sasdf');     
+	// 		                        $("#associated_requests_ids").val('');
+	//                                 $("#submit_check").val('no');
+	//                                 $("#selected_supplier_email").val('');          
+	// 							// $('#clone_another_sup_info').addClass('d-none');
+	//                         }                      
+	//                     }
+	//                 });
+	//             }
+	//         }
+	//     }
+
+	// });
+	var currentXhr_42='';
+	// var currentXhr_42_keyup='';
+
+	function validate_legalname(){
+	    var search_keyword = document.getElementById('15').value.trim().toLowerCase();
+	    var supplier_legal_name = document.getElementById('42').value.trim();
+	    var supplier_request_id = document.getElementById('sup_id').value.trim();
+	    var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+	    var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+	    var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim().toLowerCase();
+	    var supplier_process = document.getElementById('supplier_process').value.trim();   
+	    if (supplier_process=='Y') { 
+	        if (search_keyword != '' && supplier_legal_name != '') {        	
+	            if (selected_supplier_email == search_keyword) {
+	                // if (currentXhr_42 && currentXhr_42.readyState !== 4) {
+	                //     currentXhr_42.abort(); // clear previous request
+	                //     // console.log('abort');
+	                // }
+	                // currentXhr_42 = $.ajax({
+	                $.ajax({
+	                    type: "POST",
+	                    url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+	                    data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+	                    dataType: "json",
+	                    success: function(data) {                 
+	                        ajaxindicatorstop();
+	                        console.log('stop');
+	                        if (data.length > 0) {
+	                            $.each(data, function(index, value) {
+	                                console.log(index + ' - ' + value);
+	                                var result = value.split('|');
+	                                var associated_sup_id_res = result[0];
+	                                var supplier_email_address_res = result[1];
+	                                // insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+	                                $("#associated_requests_ids").val(associated_sup_id_res);
+	                                $("#submit_check").val('yes');
+	                                $("#selected_supplier_email").val(supplier_email_address_res);
+	                                // $('#clone_another_sup_info').removeClass('d-none');                                
+	                            });
+	                        }else{                  
+	                            // $('#clone_another_sup_info').addClass('d-none');
+	                            $("#associated_requests_ids").val('');
+	                            $("#submit_check").val('no');
+	                            $("#selected_supplier_email").val('');
+	                        }                      
+	                    }
+	                });
+	            }
+	        }
+	    }
+	}
+
+	$("#42").bind({
+	    copy : function(){    
+		    validate_legalname();  
+	    },
+	    paste : function(){  
+		    validate_legalname(); 
+	    },
+	    keyup : function(){
+	    	var search_keyword = document.getElementById('15').value.trim().toLowerCase();
+		    var supplier_legal_name = document.getElementById('42').value.trim();
+		    var supplier_request_id = document.getElementById('sup_id').value.trim();
+		    var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
+		    var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
+		    var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim().toLowerCase();
+		    var supplier_process = document.getElementById('supplier_process').value.trim();   
+		    if (supplier_process=='Y') {
+		        if (search_keyword != '' && supplier_legal_name != '') { 
+		            if (selected_supplier_email == search_keyword) { 
+		                if (currentXhr_42 && currentXhr_42.readyState !== 4) { 
+		                    currentXhr_42.abort(); // clear previous request
+		                    console.log('abort');
+		                }
+		                currentXhr_42 = $.ajax({
+		                    type: "POST",
+		                    url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',
+		                    data: { search_keyword: search_keyword, supplier_legal_name: supplier_legal_name, supplier_request_id: supplier_request_id, ['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>' },
+		                    dataType: "json",
+		                    success: function(data) {                 
+		                        ajaxindicatorstop();
+		                        console.log('stop');
+		                        if (data.length > 0) {
+		                            $.each(data, function(index, value) {
+		                                console.log(index + ' - ' + value);
+		                                var result = value.split('|');
+		                                var associated_sup_id_res = result[0];
+		                                var supplier_email_address_res = result[1];
+		                                // insert_supplier_temp_data(associated_sup_id_res, supplier_email_address_res, supplier_request_id);
+		                                $("#associated_requests_ids").val(associated_sup_id_res);
+		                                $("#submit_check").val('yes');
+		                                $("#selected_supplier_email").val(supplier_email_address_res);
+										// $('#clone_another_sup_info').removeClass('d-none');                                
+		                            });
+		                        }else{                  
+									// $('#clone_another_sup_info').addClass('d-none');
+									$("#associated_requests_ids").val('');
+		                            $("#submit_check").val('no');
+		                            $("#selected_supplier_email").val('');
+		                        }                      
+		                    }
+		                });
+		            }
+		        }
+		    }
+		    }
+	}); 
+
+
+
 });		
 
 function checkForExitsingSupplier(){
-	//ajaxindicatorstart();
+	
 	var search_keyword = document.getElementById('15').value.trim();
 	var supplier_legal_name = document.getElementById('42').value.trim();
 	var supplier_request_id = document.getElementById('sup_id').value.trim();
 	var associated_requests_ids = document.getElementById('associated_requests_ids').value.trim();
 	var selected_supplier_legal_name = document.getElementById('selected_supplier_legal_name').value.trim();
 	var selected_supplier_email = document.getElementById('selected_supplier_email').value.trim();
-	if(search_keyword!='' && supplier_legal_name!='' && associated_requests_ids!='' && selected_supplier_legal_name!=''){
-		if(selected_supplier_legal_name!=supplier_legal_name || search_keyword!=selected_supplier_email){
-			alert('etetetete');
+	if(search_keyword!='' && supplier_legal_name!=''){
+		if(selected_supplier_email!=search_keyword){
+		$.ajax({	
+			type: "POST",	
+			url: '<?php echo base_url();?>smartform/get_supplier_contact_email_auto_complete_blur',	
+			data: { search_keyword: search_keyword,supplier_legal_name:supplier_legal_name,supplier_request_id:supplier_request_id,['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>'},
+			dataType  : "json", 
+			success : function(data) {	
+				ajaxindicatorstop();
+				if(data !=''){
+					$.each(data, function(index, value) {   
+						console.log(index+ ' - '+value);
+						var result = value.split('|');
+						var associated_sup_id_res=result[0];
+						var supplier_email_address_res=result[1];
+						// insert_supplier_temp_data(associated_sup_id_res,supplier_email_address_res,supplier_request_id);
+						$("#associated_requests_ids").val(associated_sup_id_res);
+						$("#submit_check").val('yes'); 
+						$("#selected_supplier_email").val(supplier_email_address_res); 						
+					});
+				}else{
+					$("#associated_requests_ids").val('');
+                    $("#submit_check").val('no');
+                    $("#selected_supplier_email").val('');
+				}
+			}	
+		});
 		}
-		// $.ajax({	
-		// 	type: "POST",	
-		// 	url: '<?php echo base_url();?>smartform/insert_supplier_temp_data_blur',	
-		// 	search_keyword: search_keyword,supplier_legal_name:supplier_legal_name,supplier_request_id:supplier_request_id,['<?php echo $this->security->get_csrf_token_name();?>']: '<?php echo $this->security->get_csrf_hash();?>'
-		// 	success   : function(data) {	
-				//ajaxindicatorstop();
-					
-		// 	}	
-		// });
 	}
 
 
